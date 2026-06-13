@@ -1,7 +1,6 @@
-import { sequelize } from "../src/models/index.js";
+import sequelize from "../config/sequelize.js";
 import { db_config_schema } from "../src/validations/db.js";
 import { CONSTANT } from "../utils/constants.js";
-import DB from "./config.js";
 
 await validateDbConfiguration();
 await connectDatabase();
@@ -9,7 +8,7 @@ await connectDatabase();
 // authenticate db schema first
 async function validateDbConfiguration() {
   try {
-    await db_config_schema.validateAsynv(CONSTANT.DB);
+    await db_config_schema.validateAsync(CONSTANT.DB);
     console.log("✅ Database Configuration Validated.");
   } catch (error) {
     console.error("❌ Invalid Database Configuration:", error.message);
@@ -27,12 +26,12 @@ export async function connectDatabase() {
     console.log("✅ Database Connected Successfully");
 
     // Run database sync logic if configuration is explicitly set to ALTER or FORCE
-    if (DB.SYNC !== "NONE") {
+    if (CONSTANT.DB.SYNC !== "NONE") {
       await sequelize.sync({
-        alter: DB.SYNC === "ALTER",
-        force: DB.SYNC === "FORCE",
+        alter: CONSTANT.DB.SYNC === "ALTER",
+        force: CONSTANT.DB.SYNC === "FORCE",
       });
-      console.log(`🔄 Database Schema Synced via: ${DB.SYNC}`);
+      console.log(`🔄 Database Schema Synced via: ${CONSTANT.DB.SYNC}`);
     }
   } catch (err) {
     console.error(

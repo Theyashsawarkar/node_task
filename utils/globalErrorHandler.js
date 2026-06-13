@@ -1,18 +1,21 @@
 import { CustomError } from "./customErrors.js";
-import commonFunctions from "./commonFunctions.js";
+import * as dbOperations from "../utils/dbOperations.js";
 import db from "../src/models/index.js"; // Assuming your models index exports as default in ES6
 
 export async function globalErrorHandler(err, req, res, next) {
   try {
     const userData = req.userData;
 
-    await commonFunctions.create(db.errorLogger, {
-      message: err.message,
-      method: req.method,
-      baseUrl: req.originalUrl,
-      userData:
-        typeof userData === "object" ? JSON.stringify(userData) : userData,
-      meta: err.stack,
+    await dbOperations.create({
+      model: db.errorLogger,
+      data: {
+        message: err.message,
+        method: req.method,
+        baseUrl: req.originalUrl,
+        userData:
+          typeof userData === "object" ? JSON.stringify(userData) : userData,
+        meta: err.stack,
+      },
     });
   } catch (dbError) {
     console.error(

@@ -1,24 +1,26 @@
 import { Sequelize } from "sequelize";
-import DB from "./config.js";
+import { CONSTANT } from "../utils/constants.js";
 
 const sequelize = new Sequelize({
-  host: DB.HOST,
-  database: DB.DATABASE,
-  username: DB.USERNAME,
-  password: DB.PASSWORD,
-  port: DB.PORT,
-  dialect: DB.DIALECT,
+  host: CONSTANT.DB.HOST,
+  database: CONSTANT.DB.DATABASE,
+  username: CONSTANT.DB.USERNAME,
+  password: CONSTANT.DB.PASSWORD,
+  port: CONSTANT.DB.PORT,
+  dialect: CONSTANT.DB.DIALECT,
 
   pool: {
-    max: DB.POOL.MAX,
-    min: DB.POOL.MIN,
-    acquire: DB.POOL.ACQUIRE,
-    idle: DB.POOL.IDLE,
+    max: CONSTANT.DB.POOL.MAX,
+    min: CONSTANT.DB.POOL.MIN,
+    acquire: CONSTANT.DB.POOL.ACQUIRE,
+    idle: CONSTANT.DB.POOL.IDLE,
   },
 
   dialectOptions: {
-    ...(DB.DIALECT_OPTIONS.ssl && { ssl: DB.DIALECT_OPTIONS.ssl }),
-    keepAlive: DB.DIALECT_OPTIONS.keepAlive,
+    ...(CONSTANT.DB.DIALECT_OPTIONS.ssl && {
+      ssl: CONSTANT.DB.DIALECT_OPTIONS.ssl,
+    }),
+    keepAlive: CONSTANT.DB.DIALECT_OPTIONS.keepAlive,
   },
 
   define: {
@@ -28,7 +30,7 @@ const sequelize = new Sequelize({
     paranoid: true, // Native support for your soft-delete wrapper
   },
 
-  logging: DB.LOGGING ? console.log : false,
+  logging: CONSTANT.DB.LOGGING ? console.log : false,
 });
 
 export default sequelize;

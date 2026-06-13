@@ -1,4 +1,5 @@
-import { db_sync_options } from "../../utils/enums";
+import Joi from "joi";
+import { db_sync_options } from "../../utils/enums.js";
 
 export const db_config_schema = Joi.object({
   USERNAME: Joi.string().required(),
@@ -21,5 +22,7 @@ export const db_config_schema = Joi.object({
     keepAlive: Joi.boolean(),
   }),
   LOGGING: Joi.boolean(),
-  SYNC: Joi.string().valid(Object.values(db_sync_options)).required(),
+  SYNC: Joi.string()
+    .valid(...Object.values(db_sync_options))
+    .required(),
 });

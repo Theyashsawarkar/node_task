@@ -32,3 +32,5 @@ export const paginatedResponse = ({ page, limit, totalCount, responses }) => {
     responses,
   };
 };
+
+export const isTrue = (value) => ["true", "yes", 1, true].includes(value);

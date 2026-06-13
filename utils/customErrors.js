@@ -1,4 +1,4 @@
-const httpStatus = require("http-status");
+import httpStatus from "http-status";
 
 export class CustomError extends Error {
   constructor(message, statusCode) {

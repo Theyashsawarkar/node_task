@@ -1,3 +1,6 @@
+import "dotenv/config";
+import { isTrue } from "./commonFunctions.js";
+
 export const CONSTANT = {
   FILE: {
     MAX_ALLOWED_FILE_SIZE_MB: 10,
@@ -33,10 +36,14 @@ export const CONSTANT = {
       MAX: parseInt(process.env.DB_RETRY, 10) || 3,
     },
     DIALECT_OPTIONS: {
-      ssl: toBool(process.env.DB_SSL),
-      keepAlive: toBool(process.env.DB_KEEP_ALIVE),
+      ssl: isTrue(process.env.DB_SSL),
+      keepAlive: isTrue(process.env.DB_KEEP_ALIVE),
     },
-    LOGGING: toBool(process.env.DB_LOGGING),
+    LOGGING: isTrue(process.env.DB_LOGGING),
     SYNC: process.env.DB_SYNC_TYPE || "NONE",
+  },
+
+  SERVER: {
+    PORT: parseInt(process.env.SERVER_PORT, 10) || 3000,
   },
 };
