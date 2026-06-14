@@ -1,9 +1,9 @@
 export default (sequelize, DataTypes) => {
-  const state = sequelize.define("state", {
+  const state = sequelize.define('state', {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
     },
     name: {
@@ -12,14 +12,14 @@ export default (sequelize, DataTypes) => {
       unique: true,
     },
     country_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   });
 
   state.associate = (models) => {
     state.belongsTo(models.country, {
-      foreignKey: "country_id",
+      foreignKey: 'country_id',
     });
   };
 

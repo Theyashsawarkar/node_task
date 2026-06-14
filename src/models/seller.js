@@ -1,27 +1,27 @@
 export default (sequelize, DataTypes) => {
   const seller = sequelize.define('seller', {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
     },
     user_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER, // Keep this as UUID only if the User model still uses UUIDs
       allowNull: false,
-    },
-    mobile_no: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
     },
     country_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     state_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    skills: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+      defaultValue: [],
     },
   });
 
@@ -32,11 +32,6 @@ export default (sequelize, DataTypes) => {
     seller.hasMany(models.product, {
       foreignKey: 'seller_id',
     });
-    seller.belongsToMany(models.skill, {
-      through: 'seller_skills',
-      foreignKey: 'seller_id',
-    });
-
     seller.belongsTo(models.country, {
       foreignKey: 'country_id',
     });

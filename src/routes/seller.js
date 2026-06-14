@@ -1,17 +1,9 @@
 import router from 'express/router';
 import { validator } from '../validations/auth.js';
 import { errorWrapper } from '../../utils/commonFunctions.js';
-import * as authController from '../controllers/auth.js';
-import { singleFileUploadMiddleware } from '../middlewares/fileUpload.js';
-import * as authValidation from '../validations/auth.js';
+import * as sellersValidation from '../validations/seller.js';
+import * as sellersController from '../controllers/seller.js';
 
-router.get(
-  '/',
-  validator(authValidation.signUpSchema),
-  singleFileUploadMiddleware(),
-  errorWrapper(authController.signUp),
-);
-
-router.post('/signin', validator(authValidation.signInSchema), errorWrapper(authController.signIn));
+router.get('/', validator(sellersValidation.getAllSellersQuerySchema), errorWrapper(sellersController.getAllSellers));
 
 export default router;

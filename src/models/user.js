@@ -1,13 +1,13 @@
 import bcrypt from 'bcrypt';
-import { user_roles } from '../../utils/enums';
+import { user_gender, user_roles } from '../../utils/enums';
 import { CONSTANT } from '../../utils/constants';
 
 export default (sequelize, DataTypes) => {
   const user = sequelize.define('user', {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
     },
     name: {
@@ -18,6 +18,16 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    mobile_number: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    gender: {
+      type: DataTypes.STRING,
+      values: Object.values(user_gender),
+      allowNull: false,
     },
     password_hash: {
       type: DataTypes.STRING,

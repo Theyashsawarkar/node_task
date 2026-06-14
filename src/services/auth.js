@@ -14,10 +14,12 @@ export const signUp = async ({
   role,
   mobileNumber,
   countryId,
+  gender,
   stateId,
   skills = [],
 }) => {
   await validateIsEmailTaken(email);
+  await validateIsMobileNumberTaken(mobileNumber);
 
   const userResult = await dbOperations.create({
     model: models.user,
@@ -25,6 +27,8 @@ export const signUp = async ({
       name,
       email,
       password,
+      mobile_number: mobileNumber,
+      gender,
       profile_image_path: uploadedFilePath,
       role: role === user_roles.admin ? user_roles.admin : user_roles.seller,
     },
@@ -42,7 +46,6 @@ export const signUp = async ({
   const sellerResult = await dbOperations.create({
     model: models.seller,
     body: {
-      mobile_number: mobileNumber,
       country_id: countryId,
       state_id: stateId,
       skills,
@@ -81,7 +84,18 @@ async function validateIsEmailTaken(email) {
   });
 
   if (isEmailTaken) {
-    throw new BadRequestError('Email already taken');
+    throw new BadRequestError('Email Already Asosiated With Another User');
+  }
+}
+
+async function validateIsMobileNumberTaken(mobile_number) {
+  const isEmailTaken = await dbOperations.count({
+    model: models.user,
+    condition: { mobile_number },
+  });
+
+  if (isEmailTaken) {
+    throw new BadRequestError('Mobile Number Already Asosiated With Another User');
   }
 }
 

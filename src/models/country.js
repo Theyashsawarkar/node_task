@@ -1,9 +1,9 @@
 export default (sequelize, DataTypes) => {
-  const country = sequelize.define("country", {
+  const country = sequelize.define('country', {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
     },
     name: {
@@ -15,7 +15,7 @@ export default (sequelize, DataTypes) => {
 
   country.associate = (models) => {
     country.hasMany(models.state, {
-      foreignKey: "country_id",
+      foreignKey: 'country_id',
     });
   };
 

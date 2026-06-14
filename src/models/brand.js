@@ -1,13 +1,13 @@
 export default (sequelize, DataTypes) => {
-  const brand = sequelize.define("brand", {
+  const brand = sequelize.define('brand', {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
     },
     product_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     name: {
@@ -30,7 +30,7 @@ export default (sequelize, DataTypes) => {
 
   brand.associate = (models) => {
     brand.belongsTo(models.product, {
-      foreignKey: "product_id",
+      foreignKey: 'product_id',
     });
   };
 
