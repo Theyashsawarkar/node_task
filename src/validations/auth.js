@@ -13,6 +13,7 @@ export const createSellerAccountSchema = Joi.object({
     .required(),
 
   countryId: joiNumber({ required: true }),
+  fileId: joiNumber({ required: false }),
   stateId: joiNumber({ required: true }),
 
   skills: Joi.array().items(joiString({ required: false })),
@@ -23,6 +24,7 @@ export const signUpSchema = Joi.object({
   email: joiEmail(),
   mobileNumber: Joi.string().pattern(/^[0-9]{10,15}$/),
   password: joiString({ min: 8, max: 128 }),
+  fileId: joiNumber({ required: false }),
 
   gender: Joi.string()
     .valid(...Object.values(user_gender))

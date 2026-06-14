@@ -17,7 +17,7 @@ config:
 request:
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiZW1haWwiOiJzZWxsZXJAeW9wbWFpbC5jb20iLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzgxNDcxMTE0LCJleHAiOjE3ODE0NzIwMTR9.iizZ0u9ccZ8qj6o6YFoiqnQi6nKa5A0ncPtvcNZmH8k
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJ5YXNhaEB5b3BtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MTQ3MjAzOCwiZXhwIjoxNzgxNDcyOTM4fQ.x3yErfEekVp0sT_SXTY3zYeyipcy4Lg2WY9-IUyGE98
 bundled: false
 extensions:
   bruno:

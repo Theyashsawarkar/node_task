@@ -15,7 +15,7 @@ export async function createSellerAccount({
   countryId,
   stateId,
   gender,
-  uploadedFilePath,
+  fileId,
   skills = [],
 }) {
   await validateIsEmailTaken(email);
@@ -31,7 +31,7 @@ export async function createSellerAccount({
         password_hash: password,
         mobile_number: mobileNumber,
         gender,
-        profile_image_path: uploadedFilePath,
+        file_id: fileId,
         role: user_roles.seller,
       },
       transaction,
@@ -55,7 +55,7 @@ export async function createSellerAccount({
   return commonFunctions.handleSuccess('Seller Created Successfully', result);
 }
 
-export const signUp = async ({ uploadedFilePath, name, email, password, mobileNumber, gender }) => {
+export const signUp = async ({ fileId, name, email, password, mobileNumber, gender }) => {
   await validateIsEmailTaken(email);
   await validateIsMobileNumberTaken(mobileNumber);
 
@@ -67,7 +67,7 @@ export const signUp = async ({ uploadedFilePath, name, email, password, mobileNu
       password_hash: password,
       mobile_number: mobileNumber,
       gender,
-      profile_image_path: uploadedFilePath,
+      file_id: fileId,
       role: user_roles.admin,
     },
   });
