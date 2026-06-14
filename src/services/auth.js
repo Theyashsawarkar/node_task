@@ -5,6 +5,7 @@ import * as commonFunctions from '../../utils/commonFunctions.js';
 
 import models from '../models/index.js';
 import { generateTokens, verifyRefreshToken } from '../../utils/jwt.js';
+import sequelize from '../../config/sequelize.js';
 
 export async function createSellerAccount({
   name,
@@ -20,28 +21,34 @@ export async function createSellerAccount({
   await validateIsMobileNumberTaken(mobileNumber);
   await validateStateAndCountry({ stateId, countryId });
 
-  const userResult = await dbOperations.create({
-    model: models.user,
-    body: {
-      name,
-      email,
-      password,
-      mobile_number: mobileNumber,
-      gender,
-      profile_image_path: uploadedFilePath,
-      role: user_roles.admin,
-    },
-  });
+  const result = await models.sequelize.transaction(async (transaction) => {
+    const userResult = await dbOperations.create({
+      model: models.user,
+      body: {
+        name,
+        email,
+        password,
+        mobile_number: mobileNumber,
+        gender,
+        profile_image_path: uploadedFilePath,
+        role: user_roles.seller,
+      },
+      transaction,
+    });
 
-  const sellerResult = await dbOperations.create({
-    model: models.seller,
-    body: {
-      user_id: userResult._id,
-      country_id: countryId,
-      state_id: stateId,
-      skills,
-      role: user_roles.seller,
-    },
+    const sellerResult = await dbOperations.create({
+      model: models.seller,
+      body: {
+        user_id: userResult.id,
+        country_id: countryId,
+        state_id: stateId,
+        skills,
+        role: user_roles.seller,
+      },
+      transaction,
+    });
+
+    return sellerResult;
   });
 
   return commonFunctions.handleSuccess('Seller Created Successfully', sellerResult);
