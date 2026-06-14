@@ -3,3 +3,8 @@ export const db_sync_options = {
   alter: "ALTER",
   force: "FORCE",
 };
+
+export const user_roles = {
+  admin: "ADMIN",
+  seller: "SELLER",
+};

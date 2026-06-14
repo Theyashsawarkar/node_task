@@ -34,3 +34,12 @@ export const paginatedResponse = ({ page, limit, totalCount, responses }) => {
 };
 
 export const isTrue = (value) => ["true", "yes", 1, true].includes(value);
+
+export function handleSuccess(message, data = {}) {
+  const response = {
+    success: true,
+    message: message,
+    data,
+  };
+  return response;
+}

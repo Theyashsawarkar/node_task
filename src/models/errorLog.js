@@ -8,11 +8,11 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING(10),
       allowNull: true,
     },
-    baseUrl: {
+    base_url: {
       type: DataTypes.STRING(255),
       allowNull: true,
     },
-    userData: {
+    user_data: {
       type: DataTypes.TEXT,
       allowNull: true,
     },

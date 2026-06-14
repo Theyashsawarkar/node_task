@@ -1,5 +1,5 @@
 export default (sequelize, DataTypes) => {
-  const seller = sequelize.define("seller", {
+  const seller = sequelize.define('seller', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -15,11 +15,11 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
     },
-    country: {
+    country_id: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    state: {
+    state_id: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -27,14 +27,21 @@ export default (sequelize, DataTypes) => {
 
   seller.associate = (models) => {
     seller.belongsTo(models.user, {
-      foreignKey: "user_id",
+      foreignKey: 'user_id',
     });
     seller.hasMany(models.product, {
-      foreignKey: "seller_id",
+      foreignKey: 'seller_id',
     });
     seller.belongsToMany(models.skill, {
-      through: "seller_skills",
-      foreignKey: "seller_id",
+      through: 'seller_skills',
+      foreignKey: 'seller_id',
+    });
+
+    seller.belongsTo(models.country, {
+      foreignKey: 'country_id',
+    });
+    seller.belongsTo(models.state, {
+      foreignKey: 'state_id',
     });
   };
 
