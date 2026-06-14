@@ -8,12 +8,10 @@ const folderPath = path.join('public', 'uploads');
 const allowedMaxSize = CONSTANT.FILE.MAX_ALLOWED_FILE_SIZE_MB;
 const allowedFileTypes = CONSTANT.FILE.ALLOWED_FILE_TYPES;
 
-// Ensure upload directory exists
 if (!fs.existsSync(folderPath)) {
   fs.mkdirSync(folderPath, { recursive: true });
 }
 
-// Configure storage destination and filename
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, folderPath),
   filename: (req, file, cb) => {
@@ -22,7 +20,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// Validate file against our allowed MIME types
 function checkFileType(file, cb) {
   if (allowedFileTypes.includes(file.mimetype)) {
     cb(null, true);
@@ -31,7 +28,6 @@ function checkFileType(file, cb) {
   }
 }
 
-// Middleware generator that accepts the form-data field name (defaults to "file")
 export const singleFileUploadMiddleware =
   (fieldName = 'file') =>
   (req, res, next) => {
@@ -42,22 +38,32 @@ export const singleFileUploadMiddleware =
     }).single(fieldName);
 
     upload(req, res, (err) => {
-      // Handle Multer-specific errors (like file size limit)
       if (err) {
         return response.badRequest(res, { message: err.message });
       }
 
-      // If no file was uploaded, just move to the next middleware
       if (!req.file) {
-        req.body.uploadedFilePath = null;
+        req.body.fileInfo = null;
         return next();
       }
 
-      // Strip "public" from the path and normalize backslashes for standard web URLs
-      const filePath = req.file.path.replace('public', '').replace(/\\/g, '/');
+      const physicalDiskPath = req.file.path;
+      let staticUrlPath = physicalDiskPath.replace(/^public[\\/]?/, '').replace(/\\/g, '/');
 
-      // Pass the formatted path directly into req.body
-      req.body.uploadedFilePath = filePath;
+      // Ensure leading slash for absolute pathing from domain root
+      if (!staticUrlPath.startsWith('/')) {
+        staticUrlPath = '/' + staticUrlPath;
+      }
+
+      // Append cleanly to req.body so downstream controllers can use it
+      req.body.fileInfo = {
+        original_name: req.file.originalname,
+        file_name: req.file.filename,
+        file_path: physicalDiskPath, // 'public/uploads/123.png'
+        file_url: staticUrlPath, // '/uploads/123.png'
+        mime_type: req.file.mimetype,
+        size: req.file.size,
+      };
 
       return next();
     });

@@ -6,28 +6,35 @@ import { Op } from 'sequelize';
 export async function createProduct({ userId, name, description, brandIds = [] }) {
   await validateBrandIds(brandIds);
 
-  const result = await dbOperations.create({
-    model: models.product,
-    data: {
-      name,
-      description,
-      seller_id: userId,
-    },
-  });
-
-  await dbOperations.update({
-    model: models.brand,
-    condition: {
-      id: {
-        [Op.in]: brandIds,
+  const finalProduct = await models.sequelize.transaction(async (transaction) => {
+    const productResult = await dbOperations.create({
+      model: models.product,
+      body: {
+        name,
+        description,
+        seller_id: userId,
       },
-    },
-    updatedBody: {
-      product_id: result.id,
-    },
+      transaction,
+    });
+
+    if (brandIds && brandIds.length > 0) {
+      const mappedBrandIds = brandIds.map((brandId) => ({
+        brand_id: brandId,
+        product_id: productResult.id,
+      }));
+
+      await dbOperations.create({
+        model: models.product_brand,
+        body: mappedBrandIds,
+        isBulk: true,
+        transaction,
+      });
+    }
+
+    return productResult;
   });
 
-  return commonFunctions.handleSuccess('Product Created Successfully', result);
+  return commonFunctions.handleSuccess('Product Created Successfully', finalProduct);
 }
 
 export async function getProducts({ page = 1, limit = 10, search }) {
@@ -36,20 +43,45 @@ export async function getProducts({ page = 1, limit = 10, search }) {
     condition: {
       deleted_at: null,
       ...(search && {
-        [Op.or]: [{ name: { [Op.like]: `%${search}%` } }, { description: { [Op.like]: `%${search}%` } }],
+        [Op.or]: [{ name: { [Op.iLike]: `%${search}%` } }, { description: { [Op.iLike]: `%${search}%` } }],
       }),
     },
     include: [
       {
         model: models.brand,
-        as: 'brands',
+        through: { attributes: [] },
       },
     ],
-    ...commonFunctions.getPagination({ page: 1, limit: 10 }),
+    ...commonFunctions.getPagination({ page, limit }),
+
+    //NOTE: Forces Sequelize to count the distinct primary keys
+    // of the main model (products) rather than the duplicated JOIN rows.
+    distinct: true,
   });
 
   return commonFunctions.handleSuccess(
-    'Brands Fetched Successfully',
-    commonFunctions.paginatedResponse({ page, limit, totalCount: result.count, responses: result.docs }),
+    'Products Fetched Successfully',
+    commonFunctions.paginatedResponse({
+      page,
+      limit,
+      totalCount: result.count,
+      responses: result.rows,
+    }),
   );
+}
+
+async function validateBrandIds(brandIds) {
+  const brandCount = await dbOperations.count({
+    model: models.brand,
+    condition: {
+      id: {
+        [Op.in]: brandIds,
+      },
+      deleted_at: null,
+    },
+  });
+
+  if (brandCount !== brandIds.length) {
+    throw new Error('One or more brand IDs are invalid or deleted');
+  }
 }

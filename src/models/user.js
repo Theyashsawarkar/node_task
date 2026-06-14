@@ -37,8 +37,8 @@ export default (sequelize, DataTypes) => {
         values: Object.values(user_roles),
         allowNull: false,
       },
-      profile_image_path: {
-        type: DataTypes.STRING,
+      file_id: {
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       refresh_token: {
@@ -89,6 +89,10 @@ export default (sequelize, DataTypes) => {
   user.associate = (models) => {
     user.hasOne(models.seller, {
       foreignKey: 'user_id',
+    });
+
+    user.hasOne(models.file, {
+      foreignKey: 'file_id',
     });
   };
 

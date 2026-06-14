@@ -21,16 +21,16 @@ export default (sequelize, DataTypes) => {
   });
 
   product.associate = (models) => {
-    product.belongsTo(models.seller, {
+    product.belongsTo(models.user, {
       foreignKey: 'seller_id',
     });
 
-    product.belongsToMany(models.brand, {
-      through: models.product_brand,
+    product.hasMany(models.brand, {
       foreignKey: 'product_id',
-      otherKey: 'brand_id',
     });
   };
+
+  product.sync({ force: true });
 
   return product;
 };

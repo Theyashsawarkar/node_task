@@ -18,13 +18,13 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    image_path: {
-      type: DataTypes.STRING,
+    file_id: {
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     price: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
+      type: DataTypes.FLOAT,
+      allowNull: true,
     },
   });
 
@@ -33,10 +33,12 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'user_id',
     });
 
-    brand.belongsToMany(models.product, {
-      through: models.product_brand,
-      foreignKey: 'brand_id',
-      otherKey: 'product_id',
+    brand.belongsTo(models.product, {
+      foreignKey: 'product_id',
+    });
+
+    brand.hasOne(models.file, {
+      foreignKey: 'file_id',
     });
   };
 
