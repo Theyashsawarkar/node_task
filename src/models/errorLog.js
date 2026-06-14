@@ -1,5 +1,5 @@
 export default (sequelize, DataTypes) => {
-  const errorLogger = sequelize.define("errorLogger", {
+  const errorLogger = sequelize.define('errorLogger', {
     message: {
       type: DataTypes.TEXT,
       allowNull: true,
@@ -18,6 +18,10 @@ export default (sequelize, DataTypes) => {
     },
     meta: {
       type: DataTypes.TEXT, // Used to store the full stack trace string safely
+      allowNull: true,
+    },
+    error: {
+      type: DataTypes.TEXT,
       allowNull: true,
     },
   });

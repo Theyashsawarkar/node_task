@@ -3,6 +3,7 @@ import * as dbOperations from '../../utils/dbOperations.js';
 import * as commonFunctions from '../../utils/commonFunctions.js';
 
 import models from '../models/index.js';
+import { UnauthorizedError } from '../../utils/customErrors.js';
 
 export const getAllSellers = async ({ page, limit, search, gender }) => {
   const result = await dbOperations.findAll({
@@ -39,7 +40,7 @@ export const getAllSellers = async ({ page, limit, search, gender }) => {
     ...commonFunctions.getPagination({ page, limit }),
   });
 
-  return handleSuccess(
+  return commonFunctions.handleSuccess(
     'Seller Records Fetched Successfully',
     commonFunctions.paginatedResponse({
       page,
@@ -79,7 +80,7 @@ export const getSellerById = async ({ sellerId }) => {
     ...commonFunctions.getPagination({ page, limit }),
   });
 
-  return handleSuccess('Seller Record Fetched Successfully', result);
+  return commonFunctions.handleSuccess('Seller Record Fetched Successfully', result);
 };
 
 export const deleteSellerAccount = async ({ sellerId, userId, role }) => {
@@ -114,5 +115,24 @@ export const deleteSellerAccount = async ({ sellerId, userId, role }) => {
     },
   });
 
-  return handleSuccess('Seller Account Deleted Successfully');
+  return commonFunctions.handleSuccess('Seller Account Deleted Successfully');
 };
+
+/* <---------- utils -----------> */
+
+async function checkIfAllowedToDelete({ sellerId, userId, role }) {
+  if (role !== user_roles.admin) {
+    const sellerAccount = await dbOperations.findByPk({
+      model: models.seller,
+      id: sellerId,
+      condition: {
+        deleted_at: null,
+      },
+      raw: true,
+    });
+
+    if (!sellerAccount || sellerAccount.user_id !== userId) {
+      throw new UnauthorizedError('You are not authorized to delete this seller account');
+    }
+  }
+}
