@@ -10,10 +10,10 @@ http:
     type: json
     data: |-
       {
-        "name": "seller",
-        "email": "seller@yopmail.com",
+        "name": "seller2",
+        "email": "seller2@yopmail.com",
         "password": "pass@seller",
-        "mobileNumber": "1234567890",
+        "mobileNumber": "1234567891",
         "countryId": 1,
         "gender": "female",
         "stateId": 1,

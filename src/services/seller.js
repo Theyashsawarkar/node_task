@@ -4,6 +4,7 @@ import * as commonFunctions from '../../utils/commonFunctions.js';
 
 import models from '../models/index.js';
 import { UnauthorizedError } from '../../utils/customErrors.js';
+import { Op } from 'sequelize';
 
 export const getAllSellers = async ({ page, limit, search, gender }) => {
   const result = await dbOperations.findAll({
@@ -22,7 +23,9 @@ export const getAllSellers = async ({ page, limit, search, gender }) => {
       }),
       ...(gender && { gender }),
     },
-
+    attributes: {
+      exclude: ['password_hash', 'refresh_token', 'created_at', 'updated_at'],
+    },
     include: [
       {
         model: models.seller,

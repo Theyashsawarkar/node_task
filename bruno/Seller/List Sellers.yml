@@ -5,17 +5,20 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/seller?search=&page=&limit="
+  url: "{{baseUrl}}/api/seller?search=seller2"
   params:
     - name: search
-      value: ""
+      value: seller2
       type: query
     - name: page
       value: ""
       type: query
+      disabled: true
     - name: limit
-      value: ""
+      value: "1"
       type: query
+      disabled: true
+  auth: inherit
 
 runtime:
   variables:
