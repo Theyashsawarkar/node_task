@@ -32,4 +32,12 @@ router.get(
   errorWrapper(productController.downloadProductPdf),
 );
 
+router.delete(
+  '/:productId',
+  checkAuth,
+  checkPermission({ allowedRoles: [...Object.values(user_roles)] }),
+  validate(productValidation.getProductByIdSchema, 'params'),
+  errorWrapper(productController.deleteProduct),
+);
+
 export default router;

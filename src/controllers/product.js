@@ -11,6 +11,15 @@ export const getAllProducts = async (req, res) => {
   Response.ok(res, result);
 };
 
+export const deleteProduct = async (req, res) => {
+  const result = await productService.deleteProduct({
+    ...req.params,
+    ...req.userData,
+    userId: req.userData.id,
+  });
+  Response.ok(res, result);
+};
+
 export const downloadProductPdf = async (req, res) => {
   const result = await productService.generatePdfBufferFromProducts(req.params);
 

@@ -5,6 +5,7 @@ import { Op } from 'sequelize';
 import { BadRequestError } from '../../utils/customErrors.js';
 import { specificationSheetTemplate } from '../../utils/pdf/pdfTemplate.js';
 import { compileHtmlTemplate, generatePdfBuffer } from '../../utils/pdf/index.js';
+import { user_roles } from '../../utils/enums.js';
 
 export async function createProduct({ userId, name, description, brands = [] }) {
   await validateBrandImages({ brandsImageIds: brands.map((brand) => brand.file_id), userId });
@@ -130,6 +131,30 @@ export const generatePdfBufferFromProducts = async ({ productId, userId }) => {
 
   return pdfBuffer;
 };
+
+export async function deleteProduct({ productId, userId, role }) {
+  const product = await dbOperations.findOne({
+    model: models.product,
+    condition: {
+      id: productId,
+      ...(role === user_roles.seller && { seller_id: userId }),
+    },
+  });
+
+  if (!product) {
+    throw new Error('Product not found or not owned by the user');
+  }
+
+  await dbOperations.destroy({
+    model: models.product,
+    condition: {
+      id: productId,
+      ...(role === user_roles.seller && { seller_id: userId }),
+    },
+  });
+
+  return commonFunctions.handleSuccess('Product deleted successfully');
+}
 
 /* <----------------- Utils -----------------> */
 
