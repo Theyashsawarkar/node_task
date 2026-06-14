@@ -23,3 +23,7 @@ export const getAllProductsQuerySchema = paginationQuerySchema.concat(
     search: joiString({ max: 255, required: false }).allow('').description('Search by product name or description'),
   }),
 );
+
+export const getProductByIdSchema = Joi.object({
+  productId: joiNumber({ integer: true, min: 1, required: true }),
+});

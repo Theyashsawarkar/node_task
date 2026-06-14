@@ -41,8 +41,9 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'product_id',
     });
 
-    brand.hasOne(models.file, {
+    brand.belongsTo(models.file, {
       foreignKey: 'file_id',
+      as: 'image',
     });
   };
 

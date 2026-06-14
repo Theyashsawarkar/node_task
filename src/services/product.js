@@ -3,6 +3,8 @@ import * as commonFunctions from '../../utils/commonFunctions.js';
 import models from '../models/index.js';
 import { Op } from 'sequelize';
 import { BadRequestError } from '../../utils/customErrors.js';
+import { specificationSheetTemplate } from '../../utils/pdf/pdfTemplate.js';
+import { compileHtmlTemplate, generatePdfBuffer } from '../../utils/pdf/index.js';
 
 export async function createProduct({ userId, name, description, brands = [] }) {
   await validateBrandImages({ brandsImageIds: brands.map((brand) => brand.file_id), userId });
@@ -82,6 +84,54 @@ export async function getProducts({ page = 1, limit = 10, search = '' }) {
     }),
   );
 }
+
+export const generatePdfBufferFromProducts = async ({ productId, userId }) => {
+  const rawProduct = await dbOperations.findOne({
+    model: models.product,
+    condition: { id: productId },
+    include: [
+      {
+        model: models.brand,
+        attributes: ['name', 'detail', 'price'],
+        // Include the alias we just defined in the model
+        include: [{ model: models.file, as: 'image' }],
+      },
+    ],
+  });
+
+  if (!rawProduct) throw new NoDataFoundError('Product not found');
+
+  const productData = rawProduct.get({ plain: true });
+
+  const calculatedTotal = productData.brands.reduce((sum, brand) => {
+    return sum + Number(brand.price || 0);
+  }, 0);
+
+  const dynamicData = {
+    generationDate: new Date().toLocaleDateString(),
+    sellerId: userId,
+    products: [
+      {
+        name: productData.name,
+        description: productData.description,
+        totalPrice: calculatedTotal.toFixed(2),
+        brands: productData.brands.map((brand) => ({
+          name: brand.name,
+          detail: brand.detail,
+          price: Number(brand.price).toFixed(2),
+          imagePath: brand.image?.file_url,
+        })),
+      },
+    ],
+  };
+
+  const finalHtml = compileHtmlTemplate(specificationSheetTemplate, dynamicData);
+  const pdfBuffer = await generatePdfBuffer(finalHtml);
+
+  return pdfBuffer;
+};
+
+/* <----------------- Utils -----------------> */
 
 async function validateBrandImages({ brandsImageIds, userId }) {
   const imageCount = await dbOperations.count({

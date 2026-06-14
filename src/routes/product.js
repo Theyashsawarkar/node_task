@@ -24,4 +24,12 @@ router.get(
   errorWrapper(productController.getAllProducts),
 );
 
+router.get(
+  '/:productId',
+  checkAuth,
+  checkPermission({ allowedRoles: [...Object.values(user_roles)] }),
+  validate(productValidation.getProductByIdSchema, 'params'),
+  errorWrapper(productController.downloadProductPdf),
+);
+
 export default router;

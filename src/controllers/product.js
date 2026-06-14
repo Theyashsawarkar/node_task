@@ -10,3 +10,15 @@ export const getAllProducts = async (req, res) => {
   const result = await productService.getProducts(req.query);
   Response.ok(res, result);
 };
+
+export const downloadProductPdf = async (req, res) => {
+  const result = await productService.generatePdfBufferFromProducts(req.params);
+
+  // Set Headers to tell the browser this is a file download
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'attachment; filename="Product_Specification_Sheet.pdf"');
+  res.setHeader('Content-Length', result.length);
+
+  // Send the buffer directly to the client
+  res.status(200).end(result);
+};
