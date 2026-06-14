@@ -7,7 +7,7 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
     },
     user_id: {
-      type: DataTypes.INTEGER, // Keep this as UUID only if the User model still uses UUIDs
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     country_id: {

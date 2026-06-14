@@ -3,6 +3,7 @@ import * as dbOperations from '../utils/dbOperations.js';
 import db from '../src/models/index.js';
 
 export function globalErrorHandler(err, req, res, next) {
+  console.log(err);
   setImmediate(() => {
     const userData = req.userData;
 

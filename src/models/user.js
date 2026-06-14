@@ -31,7 +31,6 @@ export default (sequelize, DataTypes) => {
       },
       password_hash: {
         type: DataTypes.STRING,
-        allowNull: false,
       },
       role: {
         type: DataTypes.STRING,

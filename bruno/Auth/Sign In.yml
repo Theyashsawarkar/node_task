@@ -1,0 +1,23 @@
+info:
+  name: Sign In
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/signin"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "yasah@yopmail.com",
+        "password": "pass@123",
+        "role": "admin"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

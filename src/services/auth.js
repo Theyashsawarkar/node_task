@@ -56,7 +56,7 @@ export const signUp = async ({ uploadedFilePath, name, email, password, mobileNu
     body: {
       name,
       email,
-      password,
+      password_hash: password,
       mobile_number: mobileNumber,
       gender,
       profile_image_path: uploadedFilePath,
@@ -64,10 +64,7 @@ export const signUp = async ({ uploadedFilePath, name, email, password, mobileNu
     },
   });
 
-  const res = userResult.toObject();
-  delete res.password_hash;
-
-  return commonFunctions.handleSuccess('Admin Created Successfully', res);
+  return commonFunctions.handleSuccess('Admin Created Successfully', userResult);
 };
 
 export async function singIn({ email, password, role }) {
@@ -76,7 +73,7 @@ export async function singIn({ email, password, role }) {
     condition: { email, role },
   });
 
-  if (!userResult || validatePassword({ password, userRecord: userResult })) {
+  if (!userResult || !(await userResult.comparePassword(password))) {
     throw new BadRequestError('Invalid credentials');
   }
 
@@ -152,10 +149,4 @@ async function validateStateAndCountry({ stateId, countryId }) {
   }
 }
 
-async function validatePassword({ password, userRecord }) {
-  const isPasswordValid = userRecord.comparePassword(password);
-
-  if (!isPasswordValid) {
-    throw new BadRequestError('Invalid credentials');
-  }
-}
+async function validatePassword({ password, userRecord }) {}
