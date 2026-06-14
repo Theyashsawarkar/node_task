@@ -3,10 +3,23 @@ import { errorWrapper } from '../../utils/commonFunctions.js';
 import * as productValidation from '../validations/product.js';
 import * as productController from '../controllers/product.js';
 import { validate } from '../middlewares/validator.js';
+import { user_roles } from '../../utils/enums.js';
 
 const router = Router();
 
-router.post('/', validate(productValidation.createProductSchema), errorWrapper(productController.createProduct));
-router.get('/', validate(productValidation.getAllProductsQuerySchema), errorWrapper(productController.getAllProducts));
+router.post(
+  '/',
+  checkAuth,
+  checkPermission({ allowedRoles: [...Object.values(user_roles)] }),
+  validate(productValidation.createProductSchema),
+  errorWrapper(productController.createProduct),
+);
+router.get(
+  '/',
+  checkAuth,
+  checkPermission({ allowedRoles: [...Object.values(user_roles)] }),
+  validate(productValidation.getAllProductsQuerySchema),
+  errorWrapper(productController.getAllProducts),
+);
 
 export default router;
