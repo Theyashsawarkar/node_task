@@ -6,18 +6,48 @@ import * as commonFunctions from '../../utils/commonFunctions.js';
 import models from '../models/index.js';
 import { generateTokens, verifyRefreshToken } from '../../utils/jwt.js';
 
-export const signUp = async ({
-  uploadedFilePath,
+export async function createSellerAccount({
   name,
   email,
   password,
-  role,
   mobileNumber,
   countryId,
   gender,
   stateId,
   skills = [],
-}) => {
+}) {
+  await validateIsEmailTaken(email);
+  await validateIsMobileNumberTaken(mobileNumber);
+  await validateStateAndCountry({ stateId, countryId });
+
+  const userResult = await dbOperations.create({
+    model: models.user,
+    body: {
+      name,
+      email,
+      password,
+      mobile_number: mobileNumber,
+      gender,
+      profile_image_path: uploadedFilePath,
+      role: user_roles.admin,
+    },
+  });
+
+  const sellerResult = await dbOperations.create({
+    model: models.seller,
+    body: {
+      user_id: userResult._id,
+      country_id: countryId,
+      state_id: stateId,
+      skills,
+      role: user_roles.seller,
+    },
+  });
+
+  return commonFunctions.handleSuccess('Seller Created Successfully', sellerResult);
+}
+
+export const signUp = async ({ uploadedFilePath, name, email, password, mobileNumber, gender }) => {
   await validateIsEmailTaken(email);
   await validateIsMobileNumberTaken(mobileNumber);
 
@@ -30,33 +60,14 @@ export const signUp = async ({
       mobile_number: mobileNumber,
       gender,
       profile_image_path: uploadedFilePath,
-      role: role === user_roles.admin ? user_roles.admin : user_roles.seller,
+      role: user_roles.admin,
     },
   });
 
   const res = userResult.toObject();
   delete res.password_hash;
 
-  if (role === user_roles.admin) {
-    return commonFunctions.handleSuccess('Admin Created Successfully', res);
-  }
-
-  await validateStateAndCountry({ stateId, countryId });
-
-  const sellerResult = await dbOperations.create({
-    model: models.seller,
-    body: {
-      country_id: countryId,
-      state_id: stateId,
-      skills,
-      role: user_roles.seller,
-    },
-  });
-
-  const response = sellerResult.toObject();
-  delete response.password_hash;
-
-  return commonFunctions.handleSuccess('Seller Created Successfully', response);
+  return commonFunctions.handleSuccess('Admin Created Successfully', res);
 };
 
 export async function singIn({ email, password, role }) {

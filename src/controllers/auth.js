@@ -11,6 +11,11 @@ export const signIn = async (req, res) => {
   Response.send(res, result);
 };
 
+export const createSellerAccount = async (req, res) => {
+  const result = await authService.createSellerAccount(req.body);
+  Response.send(res, result);
+};
+
 export const refreshAccessToken = async (req, res) => {
   const result = await authService.refreshAccessToken(req.body);
   Response.send(res, result);
