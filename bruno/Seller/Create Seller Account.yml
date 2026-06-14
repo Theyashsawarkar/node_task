@@ -4,18 +4,22 @@ info:
   seq: 2
 
 http:
-  method: GET
-  url: "{{baseUrl}}/api/seller?search=&page=&limit="
-  params:
-    - name: search
-      value: ""
-      type: query
-    - name: page
-      value: ""
-      type: query
-    - name: limit
-      value: ""
-      type: query
+  method: POST
+  url: "{{baseUrl}}/api/auth/account/seller"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "seller",
+        "email": "seller@yopmail.com",
+        "password": "pass@seller",
+        "mobileNumber": "1234567890",
+        "countryId": 1,
+        "gender": "female",
+        "stateId": 1,
+        "skills" : ["dance", "fight"]
+      }
+  auth: inherit
 
 runtime:
   variables:

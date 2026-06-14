@@ -21,7 +21,7 @@ router.post(
   '/account/seller',
   checkAuth,
   checkPermission({ allowedRoles: [user_roles.admin] }),
-  validate(authValidation.signUpSchema),
+  validate(authValidation.createSellerAccountSchema),
   singleFileUploadMiddleware(),
   errorWrapper(authController.createSellerAccount),
 );

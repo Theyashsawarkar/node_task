@@ -13,8 +13,9 @@ export async function createSellerAccount({
   password,
   mobileNumber,
   countryId,
-  gender,
   stateId,
+  gender,
+  uploadedFilePath,
   skills = [],
 }) {
   await validateIsEmailTaken(email);
@@ -27,7 +28,7 @@ export async function createSellerAccount({
       body: {
         name,
         email,
-        password,
+        password_hash: password,
         mobile_number: mobileNumber,
         gender,
         profile_image_path: uploadedFilePath,
@@ -51,7 +52,7 @@ export async function createSellerAccount({
     return sellerResult;
   });
 
-  return commonFunctions.handleSuccess('Seller Created Successfully', sellerResult);
+  return commonFunctions.handleSuccess('Seller Created Successfully', result);
 }
 
 export const signUp = async ({ uploadedFilePath, name, email, password, mobileNumber, gender }) => {
@@ -137,9 +138,9 @@ async function validateIsMobileNumberTaken(mobile_number) {
 }
 
 async function validateStateAndCountry({ stateId, countryId }) {
-  const isStateValid = await dbOperations.count({
+  const isStateValid = await dbOperations.findByPk({
     model: models.state,
-    condition: { id: stateId },
+    id: stateId,
   });
 
   if (!isStateValid) {
@@ -155,5 +156,3 @@ async function validateStateAndCountry({ stateId, countryId }) {
     throw new BadRequestError('Invalid country');
   }
 }
-
-async function validatePassword({ password, userRecord }) {}
