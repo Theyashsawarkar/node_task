@@ -10,14 +10,15 @@ http:
     type: json
     data: |-
       {
-        "name": "seller2",
-        "email": "seller2@yopmail.com",
+        "name": "seller3",
+        "email": "seller3@yopmail.com",
         "password": "pass@seller",
-        "mobileNumber": "1234567891",
+        "mobileNumber": "1234567892",
         "countryId": 1,
         "gender": "female",
         "stateId": 1,
-        "skills" : ["dance", "fight"]
+        "skills" : ["dance", "fight", "singing"],
+        "fileId": 7
       }
   auth: inherit
 

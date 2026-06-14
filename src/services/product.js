@@ -51,7 +51,7 @@ export async function createProduct({ userId, name, description, brands = [] }) 
   return commonFunctions.handleSuccess('Product Created Successfully', finalProduct);
 }
 
-export async function getProducts({ page = 1, limit = 10, search }) {
+export async function getProducts({ page = 1, limit = 10, search = '' }) {
   const result = await dbOperations.findAll({
     model: models.product,
     condition: {
@@ -63,7 +63,6 @@ export async function getProducts({ page = 1, limit = 10, search }) {
     include: [
       {
         model: models.brand,
-        through: { attributes: [] },
       },
     ],
     ...commonFunctions.getPagination({ page, limit }),
@@ -79,7 +78,7 @@ export async function getProducts({ page = 1, limit = 10, search }) {
       page,
       limit,
       totalCount: result.count,
-      responses: result.rows,
+      responses: await calculateAveragePriceForProduct(result.rows),
     }),
   );
 }
@@ -98,4 +97,30 @@ async function validateBrandImages({ brandsImageIds, userId }) {
   if (imageCount !== brandsImageIds.length) {
     throw new Error('One or more brand image IDs are invalid or not owned by the user');
   }
+}
+
+async function calculateAveragePriceForProduct(products) {
+  const formattedResponses = products.map((product) => {
+    // Convert the Sequelize model instance into a standard JSON object
+    const productData = product.get({ plain: true });
+
+    let averagePrice = 0;
+
+    // Ensure brands exist and calculate the average
+    if (productData.brands && productData.brands.length > 0) {
+      const totalPrice = productData.brands.reduce((sum, brand) => {
+        //NOTE: Ensure price is treated as a number (Decimal types sometimes return as strings from Postgres)
+        return sum + Number(brand.price || 0);
+      }, 0);
+
+      averagePrice = totalPrice / productData.brands.length;
+    }
+
+    // Attach the calculated field (rounded to 2 decimal places)
+    productData.averagePrice = Number(averagePrice.toFixed(2));
+
+    return productData;
+  });
+
+  return formattedResponses;
 }
