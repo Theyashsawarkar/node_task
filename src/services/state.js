@@ -16,7 +16,7 @@ export async function createState({ name, countryId }) {
   }
 
   const result = await dbOperations.create({
-    model: models.country,
+    model: models.state,
     body: {
       name,
       country_id: countryId,
@@ -26,10 +26,12 @@ export async function createState({ name, countryId }) {
   return commonFunctions.handleSuccess('State Created Successfully', result);
 }
 
-export async function getAllStates() {
+export async function getAllStates({ countryId, name }) {
   const result = await dbOperations.findAll({
     model: models.state,
     condition: {
+      ...(countryId && { country_id: countryId }),
+      ...(name && { name }),
       deleted_at: null,
     },
   });

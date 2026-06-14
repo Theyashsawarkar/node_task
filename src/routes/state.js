@@ -21,6 +21,7 @@ router.get(
   '/',
   checkAuth,
   checkPermission({ allowedRoles: [...Object.values(user_roles)] }),
+  validate(stateValidation.getAllStatesQuerySchema),
   errorWrapper(stateController.getAllStates),
 );
 

@@ -2,6 +2,22 @@ opencollection: 1.0.0
 
 info:
   name: node_task
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inlhc2FoQHlvcG1haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgxNDU1ODE0LCJleHAiOjE3ODE0NTY3MTR9.pU_vOnw2BFf6QMf_ZclXZZzOKHSKqrYkJd8Nhsw1xfM
 bundled: false
 extensions:
   bruno:
