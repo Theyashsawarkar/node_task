@@ -11,7 +11,7 @@ router.post(
   '/',
   validate(brandValidation.createBrandSchema),
   singleFileUploadMiddleware(),
-  errorWrapper(brandController.createBrand),
+  errorWrapper(brandController.creteBrand),
 );
 
 router.get('/', errorWrapper(brandController.getAllBrands));

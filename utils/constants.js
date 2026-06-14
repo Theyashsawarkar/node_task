@@ -17,6 +17,8 @@ export const CONSTANT = {
     // Access tokens should be short-lived, refresh tokens long-lived
     ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
     REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+
+    JWT_PATTERN: /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*$/,
   },
   DB: {
     USERNAME: process.env.DB_USERNAME,

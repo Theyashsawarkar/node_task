@@ -29,3 +29,8 @@ export const joiUuid = ({ required = true } = {}) => {
   let schema = Joi.string().uuid();
   return required ? schema.required() : schema.optional();
 };
+
+export const paginationQuerySchema = Joi.object({
+  page: joiNumber({ min: 1, integer: true, required: false }).default(1),
+  limit: joiNumber({ min: 1, max: 100, integer: true, required: false }).default(10),
+});

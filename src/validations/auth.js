@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { joiString, joiEmail, joiUuid } from './index.js';
 import { user_gender, user_roles } from '../../utils/enums.js';
+import { CONSTANT } from '../../utils/constants.js';
 
 export const signUpSchema = Joi.object({
   /* <--------------- BASE FIELDS (Required for all roles) ---------------> */
@@ -44,4 +45,10 @@ export const signInSchema = Joi.object({
   role: Joi.string()
     .valid(...Object.values(user_roles))
     .required(),
+});
+
+export const refreshTokenSchema = Joi.object({
+  refreshToken: joiString({ required: true }).pattern(CONSTANT.JWT.JWT_PATTERN).messages({
+    'string.pattern.base': 'Invalid token format. Expected a valid JWT structure.',
+  }),
 });
