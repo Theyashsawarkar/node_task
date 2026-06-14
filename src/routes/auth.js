@@ -15,7 +15,6 @@ router.post(
 );
 
 router.post('/signin', validate(authValidation.signInSchema), errorWrapper(authController.signIn));
-
 router.post('/refresh', validate(authValidation.refreshTokenSchema), errorWrapper(authController.refreshAccessToken));
 
 export default router;

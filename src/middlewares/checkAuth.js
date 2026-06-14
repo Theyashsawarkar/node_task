@@ -1,5 +1,4 @@
 import { verifyAccessToken } from '../../utils/jwt.js';
-import { CustomError } from '../utils/customErrors.js';
 import { UnauthorizedError } from '../../utils/customErrors.js';
 import httpStatus from 'http-status';
 
@@ -28,10 +27,10 @@ export const checkAuth = (req, res, next) => {
     switch (error.name) {
       case 'TokenExpiredError':
         return next(
-          new CustomError(httpStatus.UNAUTHORIZED, 'Access token has expired. Please use your refresh token.'),
+          new UnauthorizedError(httpStatus.UNAUTHORIZED, 'Access token has expired. Please use your refresh token.'),
         );
       case 'JsonWebTokenError':
-        return next(new CustomError(httpStatus.UNAUTHORIZED, 'Invalid access token signature or format.'));
+        return next(new UnauthorizedError(httpStatus.UNAUTHORIZED, 'Invalid access token signature or format.'));
       default:
         // For any other unexpected errors, forward them to the global handler
         next(error);

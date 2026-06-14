@@ -1,5 +1,5 @@
 import httpStatus from 'http-status';
-import { ForbiddenError, UnauthorizedError } from '../../utils/customErrors';
+import { ForbiddenError, UnauthorizedError } from '../../utils/customErrors.js';
 
 /**
  * Validates if the authenticated user has the required role(s).

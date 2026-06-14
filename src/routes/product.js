@@ -4,6 +4,8 @@ import * as productValidation from '../validations/product.js';
 import * as productController from '../controllers/product.js';
 import { validate } from '../middlewares/validator.js';
 import { user_roles } from '../../utils/enums.js';
+import { checkAuth } from '../middlewares/checkAuth.js';
+import { checkPermission } from '../middlewares/checkPermission.js';
 
 const router = Router();
 

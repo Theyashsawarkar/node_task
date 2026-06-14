@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { joiString, joiNumber } from './index';
+import { joiString, joiNumber } from './index.js';
 
 export const createBrandSchema = Joi.object({
   name: joiString({ min: 2, max: 100 }),
