@@ -4,7 +4,7 @@ import * as dbOperations from '../../utils/dbOperations.js';
 import * as commonFunctions from '../../utils/commonFunctions.js';
 
 import models from '../models/index.js';
-import { generateTokens } from '../../utils/jwt.js';
+import { generateTokens, verifyRefreshToken } from '../../utils/jwt.js';
 
 export const signUp = async ({
   uploadedFilePath,
@@ -73,6 +73,28 @@ export async function singIn({ email, password, role }) {
     'Signed in successfully',
     generateTokens({ id: userResult._id, email: userResult.email, role: userResult.role }),
   );
+}
+
+export async function refreshAccessToken({ refreshToken }) {
+  const userResult = await dbOperations.findOne({
+    model: models.user,
+    condition: { refresh_token: refreshToken },
+  });
+
+  if (!userResult) {
+    throw new BadRequestError('Invalid refresh token');
+  }
+
+  verifyRefreshToken(refreshToken);
+  const tokens = generateTokens({ id: userResult._id, email: userResult.email, role: userResult.role });
+
+  await dbOperations.update({
+    model: models.user,
+    condition: { id: userResult.id },
+    update: { refresh_token: tokens.refreshToken },
+  });
+
+  return commonFunctions.handleSuccess('Access token refreshed successfully', tokens);
 }
 
 /* <---------------------------------- Utility Functions----------------------------------> */

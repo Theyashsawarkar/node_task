@@ -42,6 +42,10 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      refresh_token: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       /* <---------------- indexes ----------------> */

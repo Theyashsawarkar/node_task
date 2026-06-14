@@ -10,3 +10,8 @@ export const signIn = async (req, res) => {
   const result = await authService.singIn(req.body);
   Response.send(res, result);
 };
+
+export const refreshAccessToken = async (req, res) => {
+  const result = await authService.refreshAccessToken(req.body);
+  Response.send(res, result);
+};
