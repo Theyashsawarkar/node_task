@@ -12,11 +12,13 @@ export const getAllSellers = async ({ page, limit, search, gender }) => {
       deleted_at: null,
       role: user_roles.seller,
       ...(search && {
-        ...[
-          { name: { [Op.like]: `%${search}%` } },
-          { email: { [Op.like]: `%${search}%` } },
-          { mobile_number: { [Op.like]: `%${search}%` } },
-        ],
+        ...{
+          [Op.or]: [
+            { name: { [Op.like]: `%${search}%` } },
+            { email: { [Op.like]: `%${search}%` } },
+            { mobile_number: { [Op.like]: `%${search}%` } },
+          ],
+        },
       }),
       ...(gender && { gender }),
     },

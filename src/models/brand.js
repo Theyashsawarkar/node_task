@@ -6,9 +6,13 @@ export default (sequelize, DataTypes) => {
       primaryKey: true,
       allowNull: false,
     },
+    usesr_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     product_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     name: {
       type: DataTypes.STRING,
@@ -29,6 +33,9 @@ export default (sequelize, DataTypes) => {
   });
 
   brand.associate = (models) => {
+    brand.belongsTo(models.user, {
+      foreignKey: 'usesr_id',
+    });
     brand.belongsTo(models.product, {
       foreignKey: 'product_id',
     });
