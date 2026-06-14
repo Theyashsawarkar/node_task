@@ -1,46 +1,49 @@
 import { CustomError } from './customErrors.js';
 import * as dbOperations from '../utils/dbOperations.js';
-import db from '../src/models/index.js'; // Assuming your models index exports as default in ES6
+import db from '../src/models/index.js';
 
-export async function globalErrorHandler(err, req, res, next) {
-  try {
+export function globalErrorHandler(err, req, res, next) {
+  setImmediate(() => {
     const userData = req.userData;
 
-    console.log(err);
+    dbOperations
+      .create({
+        model: db.errorLogger,
+        body: {
+          message: err.message,
+          method: req.method,
+          base_url: req.originalUrl,
+          user_data: typeof userData === 'object' ? JSON.stringify(userData) : userData,
+          meta: err.stack,
+          error: String(err),
+        },
+      })
+      .catch((dbError) => {
+        console.error('[Error Logger DB Insert Failed] =>', dbError);
+        console.error('[Original Unlogged Error] =>', err);
+      });
+  });
 
-    await dbOperations.create({
-      model: db.errorLogger,
-      data: {
-        message: err.message,
-        method: req.method,
-        base_url: req.originalUrl,
-        user_data: typeof userData === 'object' ? JSON.stringify(userData) : userData,
-        meta: err.stack,
-        error: String(err),
-      },
-    });
-  } catch (dbError) {
-    console.error('Error While inserting Error Information in Error Logger => ', dbError);
-  }
-
-  // Set locals, only providing error in development
-  res.locals.message = err.message;
-
-  // Send response for known operational CustomErrors
-  if (err instanceof CustomError) {
-    return res.status(err.statusCode).json({
-      statusCode: err.statusCode,
-      error: err.message,
-    });
-  }
-
-  // Send fallback response for all other unhandled/system errors
+  const isCustomError = err instanceof CustomError;
   const statusCode = err.status || err.statusCode || 500;
+  const isProduction = process.env.NODE_ENV === 'production';
 
-  return res.status(statusCode).json({
+  const responseMessage =
+    isProduction && statusCode === 500 && !isCustomError
+      ? 'An unexpected internal system error occurred. Please try again later.'
+      : err.message;
+
+  const errorResponse = {
+    success: false,
     statusCode: statusCode,
     error: err.name || 'InternalServerError',
-    keyValue: err.keyValue ? JSON.stringify(err.keyValue) : undefined,
-    message: err.message,
-  });
+    message: responseMessage,
+  };
+
+  if (!isProduction && !isCustomError) {
+    errorResponse.stack = err.stack;
+    if (err.keyValue) errorResponse.keyValue = err.keyValue;
+  }
+
+  return res.status(statusCode).json(errorResponse);
 }
