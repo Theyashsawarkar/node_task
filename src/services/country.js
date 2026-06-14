@@ -16,7 +16,7 @@ export async function createCountry({ name }) {
 
   const result = await dbOperations.create({
     model: models.country,
-    data: {
+    body: {
       name,
     },
   });

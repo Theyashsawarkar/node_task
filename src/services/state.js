@@ -17,7 +17,7 @@ export async function createState({ name, countryId }) {
 
   const result = await dbOperations.create({
     model: models.country,
-    data: {
+    body: {
       name,
       country_id: countryId,
     },

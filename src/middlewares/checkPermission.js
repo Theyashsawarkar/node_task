@@ -1,4 +1,3 @@
-import httpStatus from 'http-status';
 import { ForbiddenError, UnauthorizedError } from '../../utils/customErrors.js';
 
 /**
@@ -8,13 +7,11 @@ import { ForbiddenError, UnauthorizedError } from '../../utils/customErrors.js';
 export const checkPermission = ({ allowedRoles = [] }) => {
   return (req, res, next) => {
     if (!req.userData || !req.userData.role) {
-      return next(new UnauthorizedError(httpStatus.UNAUTHORIZED, 'Authentication context missing. Please log in.'));
+      return next(new UnauthorizedError('Authentication context missing. Please log in.'));
     }
 
     if (!allowedRoles.includes(req.userData.role)) {
-      return next(
-        new ForbiddenError(httpStatus.FORBIDDEN, 'You do not have the required permissions to perform this action.'),
-      );
+      return next(new ForbiddenError('You do not have the required permissions to perform this action.'));
     }
 
     next();

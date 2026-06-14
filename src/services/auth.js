@@ -64,7 +64,7 @@ export const signUp = async ({ uploadedFilePath, name, email, password, mobileNu
     },
   });
 
-  return commonFunctions.handleSuccess('Admin Created Successfully', userResult);
+  return commonFunctions.handleSuccess('Admin Created Successfully');
 };
 
 export async function singIn({ email, password, role }) {

@@ -1,0 +1,24 @@
+info:
+  name: Add Country
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/state"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "maharashtra",
+        "countryId": 1
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inlhc2FoQHlvcG1haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgxNDU0NDU4LCJleHAiOjE3ODE0NTUzNTh9.OoEV1Nr3mEhkyEPTcSMYGXj7PedvJnp19yxUDsseaMI
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
