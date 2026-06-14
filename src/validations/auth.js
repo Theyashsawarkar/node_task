@@ -1,7 +1,6 @@
 import Joi from 'joi';
 import { joiString, joiEmail, joiUuid, joiNumber } from './index.js';
 import { user_gender, user_roles } from '../../utils/enums.js';
-import { CONSTANT } from '../../utils/constants.js';
 
 export const createSellerAccountSchema = Joi.object({
   name: joiString({ max: 100 }),
@@ -40,7 +39,5 @@ export const signInSchema = Joi.object({
 });
 
 export const refreshTokenSchema = Joi.object({
-  refreshToken: joiString({ required: true }).pattern(CONSTANT.JWT.JWT_PATTERN).messages({
-    'string.pattern.base': 'Invalid token format. Expected a valid JWT structure.',
-  }),
+  refreshToken: joiString({ required: true }),
 });

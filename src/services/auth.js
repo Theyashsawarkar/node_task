@@ -85,9 +85,12 @@ export async function singIn({ email, password, role }) {
     throw new BadRequestError('Invalid credentials');
   }
 
+  const tokens = generateTokens({ id: userResult.id, email: userResult.email, role: userResult.role });
+  await userResult.update({ refresh_token: tokens.refreshToken });
+
   return commonFunctions.handleSuccess('Signed in successfully', {
     role: userResult.role,
-    ...generateTokens({ id: userResult.id, email: userResult.email, role: userResult.role }),
+    ...tokens,
   });
 }
 
