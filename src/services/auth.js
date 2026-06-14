@@ -85,10 +85,10 @@ export async function singIn({ email, password, role }) {
     throw new BadRequestError('Invalid credentials');
   }
 
-  return commonFunctions.handleSuccess(
-    'Signed in successfully',
-    generateTokens({ id: userResult.id, email: userResult.email, role: userResult.role }),
-  );
+  return commonFunctions.handleSuccess('Signed in successfully', {
+    role: userResult.role,
+    ...generateTokens({ id: userResult.id, email: userResult.email, role: userResult.role }),
+  });
 }
 
 export async function refreshAccessToken({ refreshToken }) {
