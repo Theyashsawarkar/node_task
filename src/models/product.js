@@ -30,7 +30,5 @@ export default (sequelize, DataTypes) => {
     });
   };
 
-  product.sync({ force: true });
-
   return product;
 };

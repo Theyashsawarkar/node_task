@@ -18,6 +18,10 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    product_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     file_id: {
       type: DataTypes.INTEGER,
       allowNull: true,

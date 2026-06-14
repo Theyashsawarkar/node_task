@@ -2,11 +2,24 @@ import * as dbOperations from '../../utils/dbOperations.js';
 import * as commonFunctions from '../../utils/commonFunctions.js';
 import models from '../models/index.js';
 import { Op } from 'sequelize';
+import { BadRequestError } from '../../utils/customErrors.js';
 
-export async function createProduct({ userId, name, description, brandIds = [] }) {
-  await validateBrandIds(brandIds);
+export async function createProduct({ userId, name, description, brands = [] }) {
+  await validateBrandImages({ brandsImageIds: brands.map((brand) => brand.file_id), userId });
 
   const finalProduct = await models.sequelize.transaction(async (transaction) => {
+    const product = await dbOperations.findOne({
+      model: models.product,
+      condition: {
+        name,
+      },
+      transaction,
+    });
+
+    if (product) {
+      throw new BadRequestError('Product with this name already exists');
+    }
+
     const productResult = await dbOperations.create({
       model: models.product,
       body: {
@@ -17,15 +30,16 @@ export async function createProduct({ userId, name, description, brandIds = [] }
       transaction,
     });
 
-    if (brandIds && brandIds.length > 0) {
-      const mappedBrandIds = brandIds.map((brandId) => ({
-        brand_id: brandId,
+    if (brands && brands.length > 0) {
+      const mappedBrands = brands.map((brand) => ({
+        ...brand,
         product_id: productResult.id,
+        user_id: userId,
       }));
 
       await dbOperations.create({
-        model: models.product_brand,
-        body: mappedBrandIds,
+        model: models.brand,
+        body: mappedBrands,
         isBulk: true,
         transaction,
       });
@@ -70,18 +84,18 @@ export async function getProducts({ page = 1, limit = 10, search }) {
   );
 }
 
-async function validateBrandIds(brandIds) {
-  const brandCount = await dbOperations.count({
-    model: models.brand,
+async function validateBrandImages({ brandsImageIds, userId }) {
+  const imageCount = await dbOperations.count({
+    model: models.file,
     condition: {
       id: {
-        [Op.in]: brandIds,
+        [Op.in]: brandsImageIds,
       },
-      deleted_at: null,
+      user_id: userId,
     },
   });
 
-  if (brandCount !== brandIds.length) {
-    throw new Error('One or more brand IDs are invalid or deleted');
+  if (imageCount !== brandsImageIds.length) {
+    throw new Error('One or more brand image IDs are invalid or not owned by the user');
   }
 }
