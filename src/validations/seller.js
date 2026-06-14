@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { joiNumber, joiString } from '../utils/validationHelpers.js';
+import { joiNumber, joiString } from './index.js';
 import { user_gender } from '../../utils/enums.js';
 
 export const getAllSellersQuerySchema = Joi.object({

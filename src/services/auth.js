@@ -1,5 +1,5 @@
-import { BadRequestError } from '../../utils/customErrors';
-import { user_roles } from '../../utils/enums';
+import { BadRequestError } from '../../utils/customErrors.js';
+import { user_roles } from '../../utils/enums.js';
 import * as dbOperations from '../../utils/dbOperations.js';
 import * as commonFunctions from '../../utils/commonFunctions.js';
 

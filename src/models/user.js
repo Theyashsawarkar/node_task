@@ -1,61 +1,78 @@
 import bcrypt from 'bcrypt';
-import { user_gender, user_roles } from '../../utils/enums';
-import { CONSTANT } from '../../utils/constants';
+import { user_gender, user_roles } from '../../utils/enums.js';
+import { CONSTANT } from '../../utils/constants.js';
 
 export default (sequelize, DataTypes) => {
-  const user = sequelize.define('user', {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-      allowNull: false,
+  const user = sequelize.define(
+    'user',
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      mobile_number: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      gender: {
+        type: DataTypes.STRING,
+        values: Object.values(user_gender),
+        allowNull: false,
+      },
+      password_hash: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      role: {
+        type: DataTypes.STRING,
+        values: Object.values(user_roles),
+        allowNull: false,
+      },
+      profile_image_path: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    {
+      /* <---------------- indexes ----------------> */
+      indexes: [
+        {
+          unique: true,
+          fields: ['email'],
+          where: {
+            deleted_at: null,
+          },
+        },
+        {
+          unique: true,
+          fields: ['mobile_number'],
+          where: {
+            deleted_at: null,
+          },
+        },
+      ],
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    mobile_number: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    gender: {
-      type: DataTypes.STRING,
-      values: Object.values(user_gender),
-      allowNull: false,
-    },
-    password_hash: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    role: {
-      type: DataTypes.STRING,
-      values: Object.values(user_roles),
-      allowNull: false,
-    },
-    profile_image_path: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-  });
+  );
 
   /* <---------------- INSTANCE METHODS ----------------> */
 
   user.prototype.comparePassword = async function (plainTextPassword) {
-    // bcrypt securely handles extracting the salt from the stored hash
-    // and preventing timing attacks internally
     return bcrypt.compare(plainTextPassword, this.password_hash);
   };
 
   /* <---------------- HOOKS ----------------> */
 
   const hashPasswordHook = async (userRecord) => {
-    // Only hash if the password is actually new or being changed
     if (userRecord.changed('password_hash')) {
       userRecord.password_hash = await bcrypt.hash(userRecord.password_hash, CONSTANT.SALT_ROUNDS);
     }

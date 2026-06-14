@@ -1,4 +1,4 @@
-import httpStatus from "http-status";
+import httpStatus from 'http-status';
 
 export const validate = (schema) => async (req, res, next) => {
   try {
@@ -18,13 +18,11 @@ export const validate = (schema) => async (req, res, next) => {
     /* NOTE: Joi wraps field names in quotes (e.g., "\"email\" must be a valid email").
              This regex strips those quotes out for a cleaner client-facing response.
     */
-    const cleanMessage = error.isJoi
-      ? error.message.replace(/"/g, "")
-      : error.message;
+    const cleanMessage = error.isJoi ? error.message.replace(/"/g, '') : error.message;
 
     return res.status(httpStatus.BAD_REQUEST).json({
       statusCode: httpStatus.BAD_REQUEST,
-      error: "Bad Request",
+      error: 'Bad Request',
       message: cleanMessage,
     });
   }

@@ -1,7 +1,6 @@
 import Joi from 'joi';
-import { user_roles } from '../utils/enums.js';
-import { joiString, joiEmail, joiUuid } from '../utils/validationHelpers.js';
-import { user_gender } from '../../utils/enums.js';
+import { joiString, joiEmail, joiUuid } from './index.js';
+import { user_gender, user_roles } from '../../utils/enums.js';
 
 export const signUpSchema = Joi.object({
   /* <--------------- BASE FIELDS (Required for all roles) ---------------> */

@@ -1,4 +1,4 @@
-import { user_roles } from '../../utils/enums';
+import { user_roles } from '../../utils/enums.js';
 import * as dbOperations from '../../utils/dbOperations.js';
 import * as commonFunctions from '../../utils/commonFunctions.js';
 

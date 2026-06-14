@@ -1,11 +1,10 @@
-const multer = require("multer");
-import multer from "multer";
-import path from "path";
-import fs from "fs";
-import response from "../../utils/response.js";
-import { CONSTANT } from "../../utils/constants.js";
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import response from '../../utils/response.js';
+import { CONSTANT } from '../../utils/constants.js';
 
-const folderPath = path.join("public", "uploads");
+const folderPath = path.join('public', 'uploads');
 const allowedMaxSize = CONSTANT.FILE.MAX_ALLOWED_FILE_SIZE_MB;
 const allowedFileTypes = CONSTANT.FILE.ALLOWED_FILE_TYPES;
 
@@ -28,17 +27,13 @@ function checkFileType(file, cb) {
   if (allowedFileTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(
-      new Error(
-        `Invalid file type. Allowed types: ${allowedFileTypes.join(", ")}`,
-      ),
-    );
+    cb(new Error(`Invalid file type. Allowed types: ${allowedFileTypes.join(', ')}`));
   }
 }
 
 // Middleware generator that accepts the form-data field name (defaults to "file")
 export const singleFileUploadMiddleware =
-  (fieldName = "file") =>
+  (fieldName = 'file') =>
   (req, res, next) => {
     const upload = multer({
       storage,
@@ -59,7 +54,7 @@ export const singleFileUploadMiddleware =
       }
 
       // Strip "public" from the path and normalize backslashes for standard web URLs
-      const filePath = req.file.path.replace("public", "").replace(/\\/g, "/");
+      const filePath = req.file.path.replace('public', '').replace(/\\/g, '/');
 
       // Pass the formatted path directly into req.body
       req.body.uploadedFilePath = filePath;
