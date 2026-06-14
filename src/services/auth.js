@@ -87,7 +87,7 @@ export async function singIn({ email, password, role }) {
 
   return commonFunctions.handleSuccess(
     'Signed in successfully',
-    generateTokens({ id: userResult._id, email: userResult.email, role: userResult.role }),
+    generateTokens({ id: userResult.id, email: userResult.email, role: userResult.role }),
   );
 }
 

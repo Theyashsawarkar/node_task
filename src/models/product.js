@@ -24,8 +24,11 @@ export default (sequelize, DataTypes) => {
     product.belongsTo(models.seller, {
       foreignKey: 'seller_id',
     });
-    product.hasMany(models.brand, {
+
+    product.belongsToMany(models.brand, {
+      through: models.product_brand,
       foreignKey: 'product_id',
+      otherKey: 'brand_id',
     });
   };
 

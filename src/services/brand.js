@@ -3,13 +3,13 @@ import * as commonFunctions from '../../utils/commonFunctions.js';
 
 import models from '../models/index.js';
 
-export async function createBrand({ userId, name, price, dedails, uploadedFilePath }) {
+export async function createBrand({ userId, name, price, detail, uploadedFilePath }) {
   const result = await dbOperations.create({
     model: models.brand,
-    data: {
+    body: {
       product_id: null,
       name,
-      detail: dedails,
+      detail,
       image_path: uploadedFilePath,
       user_id: userId,
       price,
@@ -25,17 +25,6 @@ export async function getAllBrands() {
     condition: {
       deleted_at: null,
     },
-    include: [
-      {
-        model: models.user,
-        as: 'user',
-        attributes: ['-password_hash'],
-      },
-      {
-        model: models.product,
-        as: 'product',
-      },
-    ],
   });
 
   return commonFunctions.handleSuccess('Brands Fetched Successfully', result);
