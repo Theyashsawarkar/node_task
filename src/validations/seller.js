@@ -11,3 +11,7 @@ export const getAllSellersQuerySchema = paginationQuerySchema.concat(
       .description('Filter sellers by gender'),
   }),
 );
+
+export const deleteSellerSchema = Joi.object({
+  sellerId: joiNumber({ required: true }).description('Seller ID to delete'),
+});

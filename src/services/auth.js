@@ -89,8 +89,13 @@ export async function singIn({ email, password, role }) {
   await userResult.update({ refresh_token: tokens.refreshToken });
 
   return commonFunctions.handleSuccess('Signed in successfully', {
-    role: userResult.role,
-    ...tokens,
+    user: {
+      id: userResult.id,
+      name: userResult.name,
+      email: userResult.email,
+      role: userResult.role,
+    },
+    tokens,
   });
 }
 

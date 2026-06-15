@@ -17,4 +17,12 @@ router.get(
   errorWrapper(sellersController.getAllSellers),
 );
 
+router.delete(
+  '/:sellerId',
+  checkAuth,
+  checkPermission({ allowedRoles: [...Object.values(user_roles)] }),
+  validate(sellersValidation.deleteSellerSchema),
+  errorWrapper(sellersController.deleteSeller),
+);
+
 export default router;

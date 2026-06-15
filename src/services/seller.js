@@ -3,7 +3,7 @@ import * as dbOperations from '../../utils/dbOperations.js';
 import * as commonFunctions from '../../utils/commonFunctions.js';
 
 import models from '../models/index.js';
-import { UnauthorizedError } from '../../utils/customErrors.js';
+import { BadRequestError, UnauthorizedError } from '../../utils/customErrors.js';
 import { Op } from 'sequelize';
 
 export const getAllSellers = async ({ page, limit, search, gender }) => {
@@ -88,26 +88,26 @@ export const getSellerById = async ({ sellerId }) => {
   return commonFunctions.handleSuccess('Seller Record Fetched Successfully', result);
 };
 
-export const deleteSellerAccount = async ({ sellerId, userId, role }) => {
+export async function deleteSellerAccount({ sellerId, userId, role }) {
   await checkIfAllowedToDelete({ sellerId, userId, role });
 
-  const sellerAccount = await dbOperations.findByPk({
-    model: models.seller,
-    id: sellerId,
+  const sellerAccount = await dbOperations.findOne({
+    model: models.user,
     condition: {
+      id: sellerId,
       deleted_at: null,
     },
     raw: true,
   });
 
   if (!sellerAccount) {
-    return handleError('Seller Account Not Found');
+    throw new BadRequestError('Seller Account Not Found');
   }
 
   await dbOperations.destroy({
     model: models.user,
     condition: {
-      id: sellerAccount.user_id,
+      id: sellerId,
       deleted_at: null,
     },
   });
@@ -115,29 +115,16 @@ export const deleteSellerAccount = async ({ sellerId, userId, role }) => {
   await dbOperations.destroy({
     model: models.seller,
     condition: {
-      id: sellerAccount.id,
+      user_id: sellerId,
       deleted_at: null,
     },
   });
 
   return commonFunctions.handleSuccess('Seller Account Deleted Successfully');
-};
+}
 
 /* <---------- utils -----------> */
 
 async function checkIfAllowedToDelete({ sellerId, userId, role }) {
-  if (role !== user_roles.admin) {
-    const sellerAccount = await dbOperations.findByPk({
-      model: models.seller,
-      id: sellerId,
-      condition: {
-        deleted_at: null,
-      },
-      raw: true,
-    });
-
-    if (!sellerAccount || sellerAccount.user_id !== userId) {
-      throw new UnauthorizedError('You are not authorized to delete this seller account');
-    }
-  }
+  return role === user_roles.admin || sellerId === userId;
 }
